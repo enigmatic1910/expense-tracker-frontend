@@ -1,26 +1,205 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --app-background: #f7f8fa;
+  --app-surface: #ffffff;
+  --app-primary: #4f46e5;
+  --app-primary-hover: #4338ca;
+  --app-text-primary: #111827;
+  --app-text-secondary: #6b7280;
+  --app-text-muted: #9ca3af;
+  --app-border: #e5e7eb;
+  --app-income: #16a34a;
+  --app-expense: #dc2626;
+  --app-warning: #d97706;
+  --app-error: #dc2626;
+  --app-shadow-card: 0 1px 2px rgb(17 24 39 / 0.04);
+  --background: var(--app-background);
+  --foreground: var(--app-text-primary);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-app-background: var(--app-background);
+  --color-app-surface: var(--app-surface);
+  --color-app-primary: var(--app-primary);
+  --color-app-primary-hover: var(--app-primary-hover);
+  --color-app-text-primary: var(--app-text-primary);
+  --color-app-text-secondary: var(--app-text-secondary);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-border: var(--app-border);
+  --color-app-income: var(--app-income);
+  --color-app-expense: var(--app-expense);
+  --color-app-warning: var(--app-warning);
+  --color-app-error: var(--app-error);
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-size: 15px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app-page {
+  min-height: 100vh;
+  background: var(--app-background);
+  color: var(--app-text-primary);
+}
+
+.app-card {
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-card);
+}
+
+.app-title {
+  color: var(--app-text-primary);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.app-section-title {
+  color: var(--app-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.app-body {
+  color: var(--app-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.app-meta {
+  color: var(--app-text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.app-form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.app-label {
+  color: var(--app-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.app-input {
+  height: 44px;
+  width: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.app-input::placeholder {
+  color: var(--app-text-muted);
+}
+
+.app-input-with-icon {
+  padding-left: 40px;
+}
+
+.app-input:focus {
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.12);
+}
+
+.app-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.app-button-primary {
+  border: 1px solid var(--app-primary);
+  background: var(--app-primary);
+  color: #ffffff;
+}
+
+.app-button-primary:hover {
+  border-color: var(--app-primary-hover);
+  background: var(--app-primary-hover);
+}
+
+.app-button-secondary {
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+}
+
+.app-button-destructive {
+  border: 1px solid var(--app-error);
+  background: var(--app-error);
+  color: #ffffff;
+}
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.app-badge-income {
+  background: rgb(22 163 74 / 0.1);
+  color: var(--app-income);
+}
+
+.app-badge-expense {
+  background: rgb(220 38 38 / 0.1);
+  color: var(--app-expense);
+}
+
+.app-financial-value {
+  color: var(--app-text-primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.app-financial-income {
+  color: var(--app-income);
+}
+
+.app-financial-expense {
+  color: var(--app-expense);
 }
