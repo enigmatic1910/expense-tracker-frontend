@@ -13,7 +13,6 @@ import {
 import { getAccounts } from "@/lib/api/accounts";
 import { getCategories, addCategory, Category } from "@/lib/api/categories";
 import { getPaymentModes, PaymentMode } from "@/lib/api/paymentModes";
-import { getCards, Card } from "@/lib/api/cards";
 
 const rupeeFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -224,7 +223,6 @@ export function RecentActivity({
     accountId: "",
     categoryId: "",
     paymentModeId: "",
-    cardId: "",
     toAccount: "",
   });
   const [savingAdd, setSavingAdd] = useState(false);
@@ -234,7 +232,6 @@ export function RecentActivity({
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentModes, setPaymentModes] = useState<PaymentMode[]>([]);
-  const [cards, setCards] = useState<Card[]>([]);
   const [customCategoryName, setCustomCategoryName] = useState("");
 
   // Derived state for available payment modes based on selected account
@@ -249,15 +246,6 @@ export function RecentActivity({
     const isCashPm = pm.name?.toLowerCase().trim() === "cash";
     return isCashAccount ? isCashPm : !isCashPm;
   });
-
-  const selectedPaymentMode = paymentModes.find(
-    (pm) => pm.id.toString() === addForm.paymentModeId,
-  );
-  const isCardPayment =
-    selectedPaymentMode?.name?.toLowerCase().includes("card") ?? false;
-  const availableCards = cards.filter(
-    (card) => !selectedAccount || card.accountId === Number(selectedAccount.id),
-  );
 
   // Auto-correct payment mode if it becomes invalid due to account change
   useEffect(() => {
@@ -284,7 +272,6 @@ export function RecentActivity({
       accountId: "",
       categoryId: "",
       paymentModeId: "",
-      cardId: "",
       toAccount: "",
     });
     setCustomCategoryName("");
@@ -293,16 +280,14 @@ export function RecentActivity({
 
     // Fetch options for the dropdowns
     try {
-      const [accs, cats, pms, cardList] = await Promise.all([
+      const [accs, cats, pms] = await Promise.all([
         getAccounts(),
         getCategories(),
         getPaymentModes(),
-        getCards(),
       ]);
       setAccounts(accs);
       setCategories(cats);
       setPaymentModes(pms);
-      setCards(cardList);
 
       const defaultAccId = accs.length > 0 ? accs[0].id.toString() : "";
 
@@ -338,10 +323,6 @@ export function RecentActivity({
       setAddError("Payment Mode is required.");
       return;
     }
-    if (isCardPayment && !addForm.cardId) {
-      setAddError("Select the card used for this transaction.");
-      return;
-    }
     if (isTransfer && (!addForm.toAccount || isNaN(toAccount))) {
       setAddError("To Account is required for transfers.");
       return;
@@ -375,7 +356,6 @@ export function RecentActivity({
         categoryId: finalCategoryId,
         accountId,
         transactionDate: addForm.transactionDate,
-        ...(isCardPayment && addForm.cardId && { cardId: addForm.cardId }),
         ...(isTransfer && { toAccount }),
       });
       setTransactions((current) => [added, ...current].slice(0, 15));
@@ -536,23 +516,25 @@ export function RecentActivity({
             ))}
           </div>
 
-          {onViewAll && (
+          <div className="flex shrink-0 items-center gap-2">
+            {onViewAll && (
+              <button
+                className="whitespace-nowrap rounded-lg border border-app-border bg-white px-3 py-1.5 text-xs font-semibold text-app-text-primary transition hover:bg-gray-50"
+                onClick={onViewAll}
+                type="button"
+              >
+                View all
+              </button>
+            )}
             <button
-              className="rounded-lg border border-app-border bg-white px-3 py-1.5 text-xs font-semibold text-app-text-primary transition hover:bg-gray-50"
-              onClick={onViewAll}
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg bg-app-primary px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-app-primary-hover"
+              onClick={openAddModal}
               type="button"
             >
-              View all
+              <Plus className="size-3.5" />
+              Add
             </button>
-          )}
-          <button
-            className="flex items-center gap-1 rounded-lg bg-app-primary px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-app-primary-hover"
-            onClick={openAddModal}
-            type="button"
-          >
-            <Plus className="size-3.5" />
-            Add
-          </button>
+          </div>
         </div>
       </div>
 
@@ -979,7 +961,6 @@ export function RecentActivity({
                   setAddForm((f) => ({
                     ...f,
                     accountId: e.target.value,
-                    cardId: "",
                   }))
                 }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
@@ -1072,7 +1053,6 @@ export function RecentActivity({
                   setAddForm((f) => ({
                     ...f,
                     paymentModeId: e.target.value,
-                    cardId: "",
                   }))
                 }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
@@ -1088,43 +1068,6 @@ export function RecentActivity({
               </select>
             </div>
           </div>
-
-          {isCardPayment && (
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-semibold text-app-text-primary"
-                htmlFor="add-card"
-              >
-                Card used
-              </label>
-              <select
-                id="add-card"
-                required
-                value={addForm.cardId}
-                onChange={(e) =>
-                  setAddForm((f) => ({ ...f, cardId: e.target.value }))
-                }
-                className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
-              >
-                <option value="" disabled>
-                  {availableCards.length > 0
-                    ? "Select card"
-                    : "No cards linked to this account"}
-                </option>
-                {availableCards.map((card) => (
-                  <option key={card.id} value={card.id}>
-                    {card.cardType === "CREDIT_CARD" ? "Credit" : "Debit"} card
-                    •••• {card.lastFourDigits}
-                  </option>
-                ))}
-              </select>
-              {availableCards.length === 0 && (
-                <p className="text-[11px] text-app-text-muted">
-                  Link a card to this account from Account Settings first.
-                </p>
-              )}
-            </div>
-          )}
 
           {/* Custom Category Name Input */}
           {addForm.categoryId === "custom" && (
