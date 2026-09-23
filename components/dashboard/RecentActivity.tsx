@@ -28,6 +28,7 @@ export type RecentActivityProps = {
   description?: string;
   className?: string;
   onViewAll?: () => void;
+  maxItems?: number;
 };
 
 function CategoryIcon({ category, type }: { category: string; type: string }) {
@@ -194,6 +195,7 @@ export function RecentActivity({
   description = "Real-time account cashflow and transactions log",
   className = "",
   onViewAll,
+  maxItems,
 }: RecentActivityProps) {
   const [filter, setFilter] = useState<"all" | "expense" | "income">("all");
   const [transactions, setTransactions] = useState<Transaction[]>(
@@ -418,6 +420,9 @@ export function RecentActivity({
         return tx.transactionType.toLowerCase() === filter;
       })
     : transactions;
+  const visibleTransactions = maxItems
+    ? filteredTransactions.slice(0, maxItems)
+    : filteredTransactions;
 
   const openEditModal = (tx: Transaction) => {
     setEditingTx(tx);
@@ -513,7 +518,7 @@ export function RecentActivity({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <div className="flex items-center gap-1 rounded-xl border border-app-border bg-gray-50/80 p-1">
             {(["all", "expense", "income"] as const).map((type) => (
               <button
@@ -587,16 +592,16 @@ export function RecentActivity({
           </div>
         ) : (
           <ul className="divide-y divide-app-border/70">
-            {filteredTransactions.map((tx) => {
+            {visibleTransactions.map((tx) => {
               const isIncome = tx.transactionType === "income";
               const category = tx.transferId ? "Transfer" : tx.transactionType;
 
               return (
                 <li
                   key={tx.transactionId}
-                  className="group flex items-center justify-between py-3.5 px-3 -mx-3 rounded-xl transition duration-150 hover:bg-indigo-50/30"
+                  className="group flex flex-wrap items-center justify-between gap-y-2 rounded-xl px-3 py-3.5 transition duration-150 hover:bg-indigo-50/30 sm:flex-nowrap"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="flex min-w-0 flex-1 basis-[calc(100%-3rem)] items-center gap-3.5 sm:basis-auto">
                     <span
                       className={`flex size-10 shrink-0 items-center justify-center rounded-xl transition group-hover:scale-105 ${
                         isIncome
@@ -640,7 +645,7 @@ export function RecentActivity({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 ml-3">
+                  <div className="order-2 ml-auto flex items-center gap-1.5 sm:order-none sm:ml-3">
                     {/* EDIT FEATURE COMMENTED OUT
                     <button
                       type="button"
@@ -669,7 +674,7 @@ export function RecentActivity({
                     </button>
                   </div>
 
-                  <div className="ml-4 shrink-0 text-right">
+                  <div className="order-3 w-full pl-[3.5rem] text-left sm:order-none sm:ml-4 sm:w-auto sm:shrink-0 sm:pl-0 sm:text-right">
                     <p
                       className={`font-mono text-sm sm:text-base font-bold ${
                         isIncome ? "text-emerald-600" : "text-rose-600"

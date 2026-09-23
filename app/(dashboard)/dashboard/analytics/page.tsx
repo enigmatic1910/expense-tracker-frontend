@@ -63,11 +63,11 @@ export default function AnalyticsPage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl space-y-6">
-      <div className="app-card flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+      <div className="app-card flex flex-col gap-4 p-4 sm:p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div>
           <div className="flex items-center gap-2">
             <Brain className="size-6 text-app-primary" />
-            <h1 className="app-title">Analytics Overview</h1>
+            <h1 className="app-title text-2xl sm:text-3xl">Analytics Overview</h1>
           </div>
           <p className="app-body mt-2">
             Explore your spending patterns, recent activity, and category
@@ -79,13 +79,15 @@ export default function AnalyticsPage() {
       <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
         <WeeklyGraphTrend className="h-full lg:col-span-2" />
         <RecentActivity
+          maxItems={5}
+          title="Recent Transactions"
           className="h-full"
           onViewAll={() => router.push("/dashboard/transactions")}
         />
         <CategorySpend className="h-full" />
       </div>
 
-      <div className="app-card flex flex-col gap-4 border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/70 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+      <div className="app-card flex flex-col gap-4 border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/70 p-4 sm:p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div>
           <div className="flex items-center gap-2">
             <Brain className="size-6 text-app-primary" />
@@ -107,7 +109,7 @@ export default function AnalyticsPage() {
           type="button"
           onClick={() => void handleGenerateInsight()}
           disabled={generating || loading}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-app-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-app-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
         >
           {generating ? (
             <Loader2 className="size-4 animate-spin" />

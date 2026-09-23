@@ -1,10 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import WalletCard from "@/components/dashboard/WalletCard";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 import { createAiParsingTask, waitForAiJob } from "@/lib/api/ai";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [processedValue, setProcessedValue] = useState("");
   const [aiStatus, setAiStatus] = useState("idle");
@@ -46,13 +49,13 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 pb-10">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4f46e5] p-6 text-white shadow-lg md:p-8">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4f46e5] p-4 text-white shadow-lg sm:p-6 md:p-8">
         <div className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full bg-indigo-300/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 left-1/3 size-72 rounded-full bg-fuchsia-400/10 blur-3xl" />
 
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-200">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-indigo-200">
               <span className="size-2 animate-pulse rounded-full bg-emerald-300" />
               Your money, made simpler
               <span className="text-indigo-300">•</span>
@@ -64,7 +67,7 @@ export default function DashboardPage() {
                 })}
               </span>
             </div>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-4xl">
               Welcome to your financial hub
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-6 text-indigo-100">
@@ -108,7 +111,15 @@ export default function DashboardPage() {
         )}
       </section>
 
-      <WalletCard />
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <WalletCard />
+        <RecentActivity
+          maxItems={5}
+          title="Recent Transactions"
+          description="Your latest account activity"
+          onViewAll={() => router.push("/dashboard/transactions")}
+        />
+      </div>
     </div>
   );
 }
