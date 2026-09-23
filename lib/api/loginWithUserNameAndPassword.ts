@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8080";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export type AuthResponse = {
     accessToken: string;
