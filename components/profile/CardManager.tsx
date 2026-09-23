@@ -130,14 +130,14 @@ export function CardManager() {
       {cards.map((card) => (
         <div
           key={card.id}
-          className="flex items-center justify-between gap-3 rounded-xl border border-app-border p-3 text-xs"
+          className="flex flex-col items-start gap-3 rounded-xl border border-app-border p-3 text-xs sm:flex-row sm:items-center sm:justify-between"
         >
           <span className="font-semibold">
             {card.cardType === "CREDIT_CARD" ? "Credit card" : "Debit card"}{" "}
             •••• {card.lastFourDigits}
           </span>
 
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-wrap items-center justify-end gap-3 sm:w-auto">
             {card.cardType === "CREDIT_CARD" && (
               <span>₹{Number(card.limit || 0).toLocaleString()} limit</span>
             )}
@@ -235,7 +235,7 @@ export function CardManager() {
         type="button"
         disabled={adding}
         onClick={() => void handleAdd()}
-        className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-app-primary px-3.5 text-xs font-semibold text-white"
+        className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-app-primary px-3.5 text-xs font-semibold text-white sm:w-auto"
       >
         {adding ? (
           <Loader2 className="size-3.5 animate-spin" />

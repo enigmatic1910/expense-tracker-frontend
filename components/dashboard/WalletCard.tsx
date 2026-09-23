@@ -68,7 +68,7 @@ export function WalletCard({
     });
   return (
     <div
-      className={`app-card flex flex-col justify-between overflow-hidden p-6 md:p-7 transition-all duration-200 hover:shadow-md ${className}`}
+      className={`app-card flex flex-col justify-between overflow-hidden p-4 sm:p-6 md:p-7 transition-all duration-200 hover:shadow-md ${className}`}
     >
       <div>
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4338ca] p-5 text-white shadow-md">
@@ -124,7 +124,7 @@ export function WalletCard({
 
           <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-white/70">
             <span className="font-mono font-medium tracking-widest">
-              {wallet.userName}
+              <span className="max-w-[55%] truncate">{wallet.userName}</span>
             </span>
             <span className="text-[11px] font-semibold text-emerald-300">
               Live balance

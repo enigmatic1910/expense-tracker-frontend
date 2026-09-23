@@ -32,14 +32,14 @@ export const Stepper = ({ step, totalSteps }: StepperProps) => (
         );
       })}
     </div>
-    <div className="mt-2 flex justify-between text-[11px] font-medium text-app-text-muted">
-      <span className={step >= 1 ? "text-app-text-primary font-semibold" : ""}>
+    <div className="mt-2 flex justify-between gap-2 text-[10px] font-medium text-app-text-muted sm:text-[11px]">
+      <span className={`truncate ${step >= 1 ? "text-app-text-primary font-semibold" : ""}`}>
         Preferences
       </span>
-      <span className={step >= 2 ? "text-app-text-primary font-semibold" : ""}>
+      <span className={`truncate text-center ${step >= 2 ? "text-app-text-primary font-semibold" : ""}`}>
         Accounts
       </span>
-      <span className={step >= 3 ? "text-app-text-primary font-semibold" : ""}>
+      <span className={`truncate text-right ${step >= 3 ? "text-app-text-primary font-semibold" : ""}`}>
         Complete
       </span>
     </div>

@@ -122,7 +122,7 @@ export function CategorySpend({
               </p>
             )}
           </div>
-          <span className="rounded-full bg-indigo-50 border border-indigo-100/80 px-2.5 py-1 text-xs font-semibold text-app-primary self-start sm:self-auto">
+          <span className="max-w-full truncate rounded-full border border-indigo-100/80 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-app-primary self-start sm:self-auto">
             Top: {topCategory.category}
           </span>
         </div>

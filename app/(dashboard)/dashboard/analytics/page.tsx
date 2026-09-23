@@ -65,7 +65,7 @@ export default function AnalyticsPage() {
     <section className="mx-auto w-full max-w-6xl space-y-6">
       <div className="app-card flex flex-col gap-4 p-4 sm:p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Brain className="size-6 text-app-primary" />
             <h1 className="app-title text-2xl sm:text-3xl">Analytics Overview</h1>
           </div>
@@ -138,7 +138,7 @@ export default function AnalyticsPage() {
       ) : insight ? (
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="app-card p-6 md:p-8">
-            <div className="mb-5 flex items-center gap-2">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
               <Lightbulb className="size-5 text-amber-500" />
               <h2 className="text-lg font-bold text-app-text-primary">
                 Summary

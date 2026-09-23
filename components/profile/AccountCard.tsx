@@ -30,14 +30,14 @@ export const AccountCard = ({
   const formattedAmount = (amount ?? 0).toLocaleString();
 
   return (
-    <div className="app-card flex items-center justify-between gap-4 p-4 transition-all duration-200 hover:border-indigo-200 hover:shadow-sm sm:p-5">
-      <div className="flex items-center gap-3.5">
+    <div className="app-card flex flex-col items-stretch gap-4 p-4 transition-all duration-200 hover:border-indigo-200 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <div className="flex min-w-0 items-center gap-3.5">
         <div className="flex size-10 sm:size-11 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-sm sm:text-base font-bold text-app-primary">
           {initial}
         </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-bold text-app-text-primary">{displayName}</p>
+        <div className="min-w-0">
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="truncate text-sm font-bold text-app-text-primary">{displayName}</p>
             {isDefault && (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                 <Check className="size-3" />
@@ -50,7 +50,7 @@ export const AccountCard = ({
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
         <div className="text-right">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-app-text-muted">
           {isCredit ? "Credit Limit" : "Balance"}

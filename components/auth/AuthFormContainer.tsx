@@ -29,7 +29,7 @@ export function AuthFormContainer({
           </span>
         </div>
 
-        <section className="app-card w-full p-8">
+        <section className="app-card w-full p-5 sm:p-8">
           <div className="mb-6">
             <h1 className="app-title">{title}</h1>
             <p className="app-body mt-2">{description}</p>

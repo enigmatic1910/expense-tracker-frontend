@@ -506,7 +506,7 @@ export default function ProfilePage() {
           }}
         >
           <div
-            className="w-full max-w-lg rounded-2xl border border-app-border bg-app-surface p-6 shadow-xl"
+            className="max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-app-border bg-app-surface p-4 shadow-xl sm:p-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="add-account-title"

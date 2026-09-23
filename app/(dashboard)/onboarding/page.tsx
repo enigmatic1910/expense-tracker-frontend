@@ -190,7 +190,10 @@ export default function OnboardingPage() {
       balance: linkBank && bankBalance !== "" ? parseFloat(bankBalance) : null,
       cardType: linkCard ? cardType : null,
       cardLastFourDigits: linkCard ? cardLastFour : null,
-      cardLimit: linkCard && cardLimit !== "" ? parseFloat(cardLimit) : null,
+      cardLimit:
+        linkCard && cardType === "CREDIT_CARD" && cardLimit !== ""
+          ? parseFloat(cardLimit)
+          : null,
       cashBalance: cashBalance !== "" ? parseFloat(cashBalance) : 0,
       paymentModeId: defaultPaymentModeId,
       languagePreference: language,
@@ -248,7 +251,7 @@ export default function OnboardingPage() {
       <Stepper step={step} totalSteps={3} />
 
       {/* Main Container Card */}
-      <div className="app-card p-6 sm:p-8 transition-all duration-200">
+      <div className="app-card p-4 transition-all duration-200 sm:p-8">
         {/* Error Alert Box */}
         {errorMessage && (
           <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-medium text-red-700">
@@ -397,7 +400,7 @@ export default function OnboardingPage() {
 
             {/* Bank Account Section */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-indigo-50 text-app-primary">
                     <Building2 className="size-4.5" />
@@ -485,7 +488,7 @@ export default function OnboardingPage() {
 
             {/* Card Section */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-indigo-50 text-app-primary">
                     <CreditCard className="size-4.5" />
@@ -528,7 +531,10 @@ export default function OnboardingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCardType("DEBIT_CARD")}
+                      onClick={() => {
+                        setCardType("DEBIT_CARD");
+                        setCardLimit("");
+                      }}
                       className={`flex-1 rounded-lg px-3 py-1.5 transition-all ${
                         cardType === "DEBIT_CARD"
                           ? "bg-app-surface text-app-text-primary shadow-xs font-bold"
@@ -539,7 +545,11 @@ export default function OnboardingPage() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div
+                    className={`grid grid-cols-1 gap-3 ${
+                      cardType === "CREDIT_CARD" ? "sm:grid-cols-2" : ""
+                    }`}
+                  >
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-semibold text-app-text-primary">
                         Card Last 4 Digits
@@ -553,26 +563,24 @@ export default function OnboardingPage() {
                       />
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-semibold text-app-text-primary">
-                        {cardType === "CREDIT_CARD"
-                          ? "Credit Limit"
-                          : "Current Card Balance"}
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-app-text-muted">
-                          ₹
-                        </span>
-                        <input
-                          placeholder={
-                            cardType === "CREDIT_CARD" ? "Limit Amount" : "0.00"
-                          }
-                          value={cardLimit}
-                          onChange={(e) => setCardLimit(e.target.value)}
-                          className="h-10 w-full rounded-xl border border-app-border bg-app-surface py-2 pl-7 pr-3.5 text-sm font-semibold text-app-text-primary placeholder:text-app-text-muted outline-none transition focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
-                        />
+                    {cardType === "CREDIT_CARD" && (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-semibold text-app-text-primary">
+                          Credit Limit
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-app-text-muted">
+                            ₹
+                          </span>
+                          <input
+                            placeholder="Limit Amount"
+                            value={cardLimit}
+                            onChange={(e) => setCardLimit(e.target.value)}
+                            className="h-10 w-full rounded-xl border border-app-border bg-app-surface py-2 pl-7 pr-3.5 text-sm font-semibold text-app-text-primary placeholder:text-app-text-muted outline-none transition focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}

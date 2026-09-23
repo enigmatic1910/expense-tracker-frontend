@@ -504,7 +504,7 @@ export function RecentActivity({
 
   return (
     <div
-      className={`app-card p-6 md:p-7 transition-all duration-200 hover:shadow-md ${className}`}
+      className={`app-card p-4 sm:p-6 md:p-7 transition-all duration-200 hover:shadow-md ${className}`}
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -697,7 +697,7 @@ export function RecentActivity({
       {/* ── Edit Modal ── */}
       <dialog
         ref={dialogRef}
-        className="w-full max-w-md rounded-2xl border border-app-border bg-white p-0 shadow-xl backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+        className="m-auto max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border border-app-border bg-white p-0 shadow-xl backdrop:bg-black/40 backdrop:backdrop-blur-sm sm:w-full"
         onClose={closeEditModal}
       >
         <form
