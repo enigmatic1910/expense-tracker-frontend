@@ -498,8 +498,8 @@ export function RecentActivity({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="flex items-center gap-1 rounded-xl border border-app-border bg-gray-50/80 p-1">
+        <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:flex-wrap sm:justify-end">
+          <div className="flex shrink-0 items-center gap-1 rounded-xl border border-app-border bg-gray-50/80 p-1">
             {(["all", "expense", "income"] as const).map((type) => (
               <button
                 key={type}
