@@ -13,15 +13,15 @@ import {
   X,
 } from "lucide-react";
 
-import { apiFetch } from "@/api/api-client";
-import { getBanks, type Bank } from "@/api/banks";
+import { apiFetch } from "@/lib/api/api-client";
+import { getBanks, type Bank } from "@/lib/api/banks";
 import {
   addAccount,
   deleteAccount,
   getAccounts,
   type AccountType,
-} from "@/api/accounts";
-import type { Account } from "@/api/model/Account";
+} from "@/lib/api/accounts";
+import type { Account } from "@/lib/api/model/Account";
 import { AccountCard } from "@/components/profile/AccountCard";
 import { CategoryManager } from "@/components/profile/CategoryManager";
 import { LanguageSettings } from "@/components/profile/LanguageSettings";
@@ -164,7 +164,8 @@ export default function ProfilePage() {
         setConfig({
           language: updated.language || lang,
           paymentModeId: updated.paymentModeId ?? newConfig.paymentModeId,
-          defaultAccountId: updated.defaultAccountId ?? newConfig.defaultAccountId,
+          defaultAccountId:
+            updated.defaultAccountId ?? newConfig.defaultAccountId,
         });
       }
     } catch (error) {
@@ -191,7 +192,8 @@ export default function ProfilePage() {
         setConfig({
           language: updated.language || newConfig.language,
           paymentModeId: updated.paymentModeId ?? modeId,
-          defaultAccountId: updated.defaultAccountId ?? newConfig.defaultAccountId,
+          defaultAccountId:
+            updated.defaultAccountId ?? newConfig.defaultAccountId,
         });
       }
     } catch (error) {
@@ -359,7 +361,8 @@ export default function ProfilePage() {
               Make it work your way
             </h2>
             <p className="app-body mt-1 text-xs sm:text-sm">
-              Choose your defaults and manage the accounts connected to your wallet.
+              Choose your defaults and manage the accounts connected to your
+              wallet.
             </p>
           </div>
         </div>
@@ -544,62 +547,64 @@ export default function ProfilePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {newAccount.type !== "CASH" && (
                   <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="bank-name"
-                    className="text-xs font-semibold text-app-text-primary"
-                  >
-                    Bank Name
-                  </label>
+                    <label
+                      htmlFor="bank-name"
+                      className="text-xs font-semibold text-app-text-primary"
+                    >
+                      Bank Name
+                    </label>
 
-                  <select
-                    id="bank-name"
-                    className="h-10 w-full cursor-pointer rounded-xl border border-app-border bg-app-surface px-3.5 text-sm font-medium text-app-text-primary outline-none transition focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
-                    value={newAccount.bankName}
-                    onChange={(event) =>
-                      setNewAccount((current) => ({
-                        ...current,
-                        bankName: event.target.value,
-                      }))
-                    }
-                    disabled={banks.length === 0}
-                  >
-                    <option value="">
-                      {banks.length === 0 ? "No banks available" : "Select a bank"}
-                    </option>
-                    {banks.map((bank) => (
-                      <option key={bank.id} value={bank.name}>
-                        {bank.name}
+                    <select
+                      id="bank-name"
+                      className="h-10 w-full cursor-pointer rounded-xl border border-app-border bg-app-surface px-3.5 text-sm font-medium text-app-text-primary outline-none transition focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
+                      value={newAccount.bankName}
+                      onChange={(event) =>
+                        setNewAccount((current) => ({
+                          ...current,
+                          bankName: event.target.value,
+                        }))
+                      }
+                      disabled={banks.length === 0}
+                    >
+                      <option value="">
+                        {banks.length === 0
+                          ? "No banks available"
+                          : "Select a bank"}
                       </option>
-                    ))}
-                  </select>
+                      {banks.map((bank) => (
+                        <option key={bank.id} value={bank.name}>
+                          {bank.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 )}
 
                 {newAccount.type !== "CASH" && (
                   <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="last-four-digits"
-                    className="text-xs font-semibold text-app-text-primary"
-                  >
-                    Last 4 Digits
-                  </label>
+                    <label
+                      htmlFor="last-four-digits"
+                      className="text-xs font-semibold text-app-text-primary"
+                    >
+                      Last 4 Digits
+                    </label>
 
-                  <input
-                    id="last-four-digits"
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    maxLength={4}
-                    className="h-10 w-full rounded-xl border border-app-border bg-app-surface px-3.5 text-sm font-medium text-app-text-primary outline-none transition placeholder:text-app-text-muted focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
-                    placeholder="e.g. 4321"
-                    value={newAccount.lastFourDigits}
-                    onChange={(event) =>
-                      setNewAccount((current) => ({
-                        ...current,
-                        lastFourDigits: event.target.value.replace(/\D/g, ""),
-                      }))
-                    }
-                  />
+                    <input
+                      id="last-four-digits"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      maxLength={4}
+                      className="h-10 w-full rounded-xl border border-app-border bg-app-surface px-3.5 text-sm font-medium text-app-text-primary outline-none transition placeholder:text-app-text-muted focus:border-app-primary focus:ring-3 focus:ring-indigo-100"
+                      placeholder="e.g. 4321"
+                      value={newAccount.lastFourDigits}
+                      onChange={(event) =>
+                        setNewAccount((current) => ({
+                          ...current,
+                          lastFourDigits: event.target.value.replace(/\D/g, ""),
+                        }))
+                      }
+                    />
                   </div>
                 )}
               </div>

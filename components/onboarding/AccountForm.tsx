@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import { Account } from "@/api/model/Account";
+import { Account } from "@/lib/api/model/Account";
 
 interface AccountFormProps {
   acc: Account;

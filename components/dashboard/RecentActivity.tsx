@@ -2,13 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
-import type { Transaction } from "@/api/model/Transaction";
-import type { Account } from "@/api/model/Account";
-import { createTransaction, deleteTransaction, getTransactions, updateTransaction } from "@/api/transactions";
-import { getAccounts } from "@/api/accounts";
-import { getCategories, addCategory, Category } from "@/api/categories";
-import { getPaymentModes, PaymentMode } from "@/api/paymentModes";
-import { getCards, Card } from "@/api/cards";
+import type { Transaction } from "@/lib/api/model/Transaction";
+import type { Account } from "@/lib/api/model/Account";
+import {
+  createTransaction,
+  deleteTransaction,
+  getTransactions,
+  updateTransaction,
+} from "@/lib/api/transactions";
+import { getAccounts } from "@/lib/api/accounts";
+import { getCategories, addCategory, Category } from "@/lib/api/categories";
+import { getPaymentModes, PaymentMode } from "@/lib/api/paymentModes";
+import { getCards, Card } from "@/lib/api/cards";
 
 const rupeeFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -68,7 +73,11 @@ function CategoryIcon({ category, type }: { category: string; type: string }) {
     );
   }
 
-  if (normalized.includes("food") || normalized.includes("dining") || normalized.includes("coffee")) {
+  if (
+    normalized.includes("food") ||
+    normalized.includes("dining") ||
+    normalized.includes("coffee")
+  ) {
     return (
       <svg
         aria-hidden="true"
@@ -112,7 +121,11 @@ function CategoryIcon({ category, type }: { category: string; type: string }) {
     );
   }
 
-  if (normalized.includes("utilit") || normalized.includes("bill") || normalized.includes("electric")) {
+  if (
+    normalized.includes("utilit") ||
+    normalized.includes("bill") ||
+    normalized.includes("electric")
+  ) {
     return (
       <svg
         aria-hidden="true"
@@ -132,7 +145,11 @@ function CategoryIcon({ category, type }: { category: string; type: string }) {
     );
   }
 
-  if (normalized.includes("fitness") || normalized.includes("gym") || normalized.includes("health")) {
+  if (
+    normalized.includes("fitness") ||
+    normalized.includes("gym") ||
+    normalized.includes("health")
+  ) {
     return (
       <svg
         aria-hidden="true"
@@ -180,7 +197,7 @@ export function RecentActivity({
 }: RecentActivityProps) {
   const [filter, setFilter] = useState<"all" | "expense" | "income">("all");
   const [transactions, setTransactions] = useState<Transaction[]>(
-    initialTransactions || []
+    initialTransactions || [],
   );
   const [loading, setLoading] = useState(!initialTransactions);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -211,7 +228,7 @@ export function RecentActivity({
   const [savingAdd, setSavingAdd] = useState(false);
   const [addError, setAddError] = useState("");
   const addDialogRef = useRef<HTMLDialogElement>(null);
-  
+
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentModes, setPaymentModes] = useState<PaymentMode[]>([]);
@@ -219,10 +236,14 @@ export function RecentActivity({
   const [customCategoryName, setCustomCategoryName] = useState("");
 
   // Derived state for available payment modes based on selected account
-  const selectedAccount = accounts.find(a => String(a.id) === String(addForm.accountId));
-  const isCashAccount = selectedAccount?.type?.toUpperCase() === "CASH" || selectedAccount?.bankName?.toLowerCase().includes("cash");
+  const selectedAccount = accounts.find(
+    (a) => String(a.id) === String(addForm.accountId),
+  );
+  const isCashAccount =
+    selectedAccount?.type?.toUpperCase() === "CASH" ||
+    selectedAccount?.bankName?.toLowerCase().includes("cash");
 
-  const availablePaymentModes = paymentModes.filter(pm => {
+  const availablePaymentModes = paymentModes.filter((pm) => {
     const isCashPm = pm.name?.toLowerCase().trim() === "cash";
     return isCashAccount ? isCashPm : !isCashPm;
   });
@@ -230,7 +251,8 @@ export function RecentActivity({
   const selectedPaymentMode = paymentModes.find(
     (pm) => pm.id.toString() === addForm.paymentModeId,
   );
-  const isCardPayment = selectedPaymentMode?.name?.toLowerCase().includes("card") ?? false;
+  const isCardPayment =
+    selectedPaymentMode?.name?.toLowerCase().includes("card") ?? false;
   const availableCards = cards.filter(
     (card) => !selectedAccount || card.accountId === Number(selectedAccount.id),
   );
@@ -238,9 +260,14 @@ export function RecentActivity({
   // Auto-correct payment mode if it becomes invalid due to account change
   useEffect(() => {
     if (availablePaymentModes.length > 0) {
-      const currentPmValid = availablePaymentModes.some(pm => pm.id.toString() === addForm.paymentModeId);
+      const currentPmValid = availablePaymentModes.some(
+        (pm) => pm.id.toString() === addForm.paymentModeId,
+      );
       if (!currentPmValid) {
-        setAddForm(prev => ({ ...prev, paymentModeId: availablePaymentModes[0].id.toString() }));
+        setAddForm((prev) => ({
+          ...prev,
+          paymentModeId: availablePaymentModes[0].id.toString(),
+        }));
       }
     }
   }, [addForm.accountId, availablePaymentModes, addForm.paymentModeId]);
@@ -261,7 +288,7 @@ export function RecentActivity({
     setCustomCategoryName("");
     addDialogRef.current?.showModal();
     setIsAdding(true);
-    
+
     // Fetch options for the dropdowns
     try {
       const [accs, cats, pms, cardList] = await Promise.all([
@@ -274,10 +301,10 @@ export function RecentActivity({
       setCategories(cats);
       setPaymentModes(pms);
       setCards(cardList);
-      
+
       const defaultAccId = accs.length > 0 ? accs[0].id.toString() : "";
-      
-      setAddForm(prev => ({
+
+      setAddForm((prev) => ({
         ...prev,
         accountId: defaultAccId,
         categoryId: cats.length > 0 ? cats[0].id.toString() : "",
@@ -295,7 +322,7 @@ export function RecentActivity({
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const accountId = parseInt(addForm.accountId, 10);
     const paymentModeId = parseInt(addForm.paymentModeId, 10);
     const isTransfer = addForm.transactionType === "transfer";
@@ -352,7 +379,9 @@ export function RecentActivity({
       setTransactions((current) => [added, ...current].slice(0, 15));
       closeAddModal();
     } catch (err: any) {
-      setAddError(err.message || "Failed to add transaction. Please try again.");
+      setAddError(
+        err.message || "Failed to add transaction. Please try again.",
+      );
     } finally {
       setSavingAdd(false);
     }
@@ -435,7 +464,9 @@ export function RecentActivity({
       });
       setTransactions((current) =>
         current.map((tx) =>
-          tx.transactionId === editingTx.transactionId ? { ...tx, ...updated } : tx,
+          tx.transactionId === editingTx.transactionId
+            ? { ...tx, ...updated }
+            : tx,
         ),
       );
       closeEditModal();
@@ -455,7 +486,9 @@ export function RecentActivity({
     try {
       await deleteTransaction(transactionId);
       setTransactions((current) =>
-        current.filter((transaction) => transaction.transactionId !== transactionId),
+        current.filter(
+          (transaction) => transaction.transactionId !== transactionId,
+        ),
       );
     } catch (error) {
       console.error("Failed to delete transaction:", error);
@@ -474,7 +507,9 @@ export function RecentActivity({
             {title}
           </h2>
           {description && (
-            <p className="app-body mt-0.5 text-xs text-app-text-secondary">{description}</p>
+            <p className="app-body mt-0.5 text-xs text-app-text-secondary">
+              {description}
+            </p>
           )}
         </div>
 
@@ -520,7 +555,9 @@ export function RecentActivity({
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="size-6 animate-spin rounded-full border-2 border-app-primary border-t-transparent" />
-            <p className="app-meta mt-3 text-xs">Loading transactions from backend...</p>
+            <p className="app-meta mt-3 text-xs">
+              Loading transactions from backend...
+            </p>
           </div>
         ) : filteredTransactions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
@@ -541,8 +578,12 @@ export function RecentActivity({
                 />
               </svg>
             </div>
-            <p className="mt-3 text-sm font-semibold text-app-text-primary">No transactions found</p>
-            <p className="app-meta mt-1 text-xs">There are no {filter} transactions recorded.</p>
+            <p className="mt-3 text-sm font-semibold text-app-text-primary">
+              No transactions found
+            </p>
+            <p className="app-meta mt-1 text-xs">
+              There are no {filter} transactions recorded.
+            </p>
           </div>
         ) : (
           <ul className="divide-y divide-app-border/70">
@@ -563,7 +604,10 @@ export function RecentActivity({
                           : "bg-rose-50 text-rose-600 border border-rose-100"
                       }`}
                     >
-                      <CategoryIcon category={category} type={tx.transactionType} />
+                      <CategoryIcon
+                        category={category}
+                        type={tx.transactionType}
+                      />
                     </span>
 
                     <div className="min-w-0">
@@ -571,8 +615,12 @@ export function RecentActivity({
                         {tx.description}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="app-meta text-xs">{tx.transactionDate}</span>
-                        <span className="text-[10px] text-app-text-muted">•</span>
+                        <span className="app-meta text-xs">
+                          {tx.transactionDate}
+                        </span>
+                        <span className="text-[10px] text-app-text-muted">
+                          •
+                        </span>
                         <span
                           className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ${
                             isIncome
@@ -584,14 +632,15 @@ export function RecentActivity({
                         </span>
                         {tx.cardLastFourDigits && (
                           <span className="text-[11px] text-app-text-muted">
-                            {tx.cardType === "CREDIT_CARD" ? "Credit" : "Debit"} •••• {tx.cardLastFourDigits}
+                            {tx.cardType === "CREDIT_CARD" ? "Credit" : "Debit"}{" "}
+                            •••• {tx.cardLastFourDigits}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
 
-                   <div className="flex items-center gap-1.5 ml-3">
+                  <div className="flex items-center gap-1.5 ml-3">
                     {/* EDIT FEATURE COMMENTED OUT
                     <button
                       type="button"
@@ -629,7 +678,9 @@ export function RecentActivity({
                       {isIncome ? "+" : "-"}
                       {rupeeFormatter.format(Math.abs(tx.amount))}
                     </p>
-                    <span className="app-meta text-[11px] uppercase tracking-wider">{tx.transactionType}</span>
+                    <span className="app-meta text-[11px] uppercase tracking-wider">
+                      {tx.transactionType}
+                    </span>
                   </div>
                 </li>
               );
@@ -644,10 +695,15 @@ export function RecentActivity({
         className="w-full max-w-md rounded-2xl border border-app-border bg-white p-0 shadow-xl backdrop:bg-black/40 backdrop:backdrop-blur-sm"
         onClose={closeEditModal}
       >
-        <form onSubmit={(e) => void handleUpdate(e)} className="flex flex-col gap-5 p-6">
+        <form
+          onSubmit={(e) => void handleUpdate(e)}
+          className="flex flex-col gap-5 p-6"
+        >
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-app-text-primary">Edit Transaction</h3>
+            <h3 className="text-base font-bold text-app-text-primary">
+              Edit Transaction
+            </h3>
             <button
               type="button"
               onClick={closeEditModal}
@@ -659,7 +715,10 @@ export function RecentActivity({
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-app-text-primary" htmlFor="edit-description">
+            <label
+              className="text-xs font-semibold text-app-text-primary"
+              htmlFor="edit-description"
+            >
               Description
             </label>
             <input
@@ -667,7 +726,9 @@ export function RecentActivity({
               type="text"
               required
               value={editForm.description}
-              onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, description: e.target.value }))
+              }
               className="rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
             />
           </div>
@@ -675,7 +736,10 @@ export function RecentActivity({
           {/* Amount + Type */}
           <div className="flex gap-3">
             <div className="flex flex-1 flex-col gap-1.5">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="edit-amount">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="edit-amount"
+              >
                 Amount
               </label>
               <input
@@ -685,18 +749,28 @@ export function RecentActivity({
                 step="0.01"
                 required
                 value={editForm.amount}
-                onChange={(e) => setEditForm((f) => ({ ...f, amount: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, amount: e.target.value }))
+                }
                 className="rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="edit-type">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="edit-type"
+              >
                 Type
               </label>
               <select
                 id="edit-type"
                 value={editForm.transactionType}
-                onChange={(e) => setEditForm((f) => ({ ...f, transactionType: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({
+                    ...f,
+                    transactionType: e.target.value,
+                  }))
+                }
                 className="rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="income">Income</option>
@@ -707,7 +781,10 @@ export function RecentActivity({
 
           {/* Date */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-app-text-primary" htmlFor="edit-date">
+            <label
+              className="text-xs font-semibold text-app-text-primary"
+              htmlFor="edit-date"
+            >
               Date
             </label>
             <input
@@ -715,14 +792,19 @@ export function RecentActivity({
               type="date"
               required
               value={editForm.transactionDate}
-              onChange={(e) => setEditForm((f) => ({ ...f, transactionDate: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, transactionDate: e.target.value }))
+              }
               className="rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
             />
           </div>
 
           {/* Account ID */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-app-text-primary" htmlFor="edit-account">
+            <label
+              className="text-xs font-semibold text-app-text-primary"
+              htmlFor="edit-account"
+            >
               Account ID
             </label>
             <input
@@ -733,7 +815,9 @@ export function RecentActivity({
               required
               placeholder="Enter your account ID"
               value={editForm.accountId}
-              onChange={(e) => setEditForm((f) => ({ ...f, accountId: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, accountId: e.target.value }))
+              }
               className="rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
             />
           </div>
@@ -771,10 +855,15 @@ export function RecentActivity({
         className="w-full max-w-md rounded-2xl border border-app-border bg-white p-0 shadow-xl backdrop:bg-black/40 backdrop:backdrop-blur-sm m-auto fixed inset-0 max-h-[90vh] overflow-y-auto"
         onClose={closeAddModal}
       >
-        <form onSubmit={(e) => void handleAdd(e)} className="flex flex-col gap-4 p-6">
+        <form
+          onSubmit={(e) => void handleAdd(e)}
+          className="flex flex-col gap-4 p-6"
+        >
           {/* Header */}
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-base font-bold text-app-text-primary">Add Transaction</h3>
+            <h3 className="text-base font-bold text-app-text-primary">
+              Add Transaction
+            </h3>
             <button
               type="button"
               onClick={closeAddModal}
@@ -790,7 +879,9 @@ export function RecentActivity({
               <button
                 key={type}
                 type="button"
-                onClick={() => setAddForm((f) => ({ ...f, transactionType: type }))}
+                onClick={() =>
+                  setAddForm((f) => ({ ...f, transactionType: type }))
+                }
                 className={`flex-1 rounded-lg py-2 text-xs font-semibold capitalize transition ${
                   addForm.transactionType === type
                     ? "bg-white text-app-primary shadow-sm"
@@ -804,7 +895,10 @@ export function RecentActivity({
 
           {/* Description */}
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-description">
+            <label
+              className="text-xs font-semibold text-app-text-primary"
+              htmlFor="add-description"
+            >
               Description
             </label>
             <input
@@ -812,7 +906,9 @@ export function RecentActivity({
               type="text"
               required
               value={addForm.description}
-              onChange={(e) => setAddForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setAddForm((f) => ({ ...f, description: e.target.value }))
+              }
               className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
             />
           </div>
@@ -820,7 +916,10 @@ export function RecentActivity({
           {/* Amount & Date */}
           <div className="flex gap-3 w-full">
             <div className="flex flex-1 flex-col gap-1.5">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-amount">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-amount"
+              >
                 Amount
               </label>
               <input
@@ -830,12 +929,17 @@ export function RecentActivity({
                 step="0.01"
                 required
                 value={addForm.amount}
-                onChange={(e) => setAddForm((f) => ({ ...f, amount: e.target.value }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, amount: e.target.value }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-date">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-date"
+              >
                 Date
               </label>
               <input
@@ -843,7 +947,9 @@ export function RecentActivity({
                 type="date"
                 required
                 value={addForm.transactionDate}
-                onChange={(e) => setAddForm((f) => ({ ...f, transactionDate: e.target.value }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, transactionDate: e.target.value }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -852,17 +958,30 @@ export function RecentActivity({
           {/* Accounts */}
           <div className="flex gap-3 w-full">
             <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-account">
-                {addForm.transactionType === "transfer" ? "From Account" : "Account"}
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-account"
+              >
+                {addForm.transactionType === "transfer"
+                  ? "From Account"
+                  : "Account"}
               </label>
               <select
                 id="add-account"
                 required
                 value={addForm.accountId}
-                onChange={(e) => setAddForm((f) => ({ ...f, accountId: e.target.value, cardId: "" }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({
+                    ...f,
+                    accountId: e.target.value,
+                    cardId: "",
+                  }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               >
-                <option value="" disabled>Select Account</option>
+                <option value="" disabled>
+                  Select Account
+                </option>
                 {accounts.map((acc) => (
                   <option key={acc.id} value={acc.id}>
                     {acc.bankName} (..{acc.lastFourDigits})
@@ -873,17 +992,24 @@ export function RecentActivity({
 
             {addForm.transactionType === "transfer" && (
               <div className="flex flex-col gap-1.5 flex-1">
-                <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-to-account">
+                <label
+                  className="text-xs font-semibold text-app-text-primary"
+                  htmlFor="add-to-account"
+                >
                   To Account
                 </label>
                 <select
                   id="add-to-account"
                   required
                   value={addForm.toAccount}
-                  onChange={(e) => setAddForm((f) => ({ ...f, toAccount: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((f) => ({ ...f, toAccount: e.target.value }))
+                  }
                   className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
                 >
-                  <option value="" disabled>Select Account</option>
+                  <option value="" disabled>
+                    Select Account
+                  </option>
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
                       {acc.bankName} (..{acc.lastFourDigits})
@@ -897,38 +1023,58 @@ export function RecentActivity({
           {/* Category & Payment Mode */}
           <div className="flex gap-3 w-full">
             <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-category">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-category"
+              >
                 Category
               </label>
               <select
                 id="add-category"
                 required
                 value={addForm.categoryId}
-                onChange={(e) => setAddForm((f) => ({ ...f, categoryId: e.target.value }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, categoryId: e.target.value }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               >
-                <option value="" disabled>Select Category</option>
+                <option value="" disabled>
+                  Select Category
+                </option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
                 ))}
-                <option value="custom" className="font-bold text-app-primary">+ Add New Category</option>
+                <option value="custom" className="font-bold text-app-primary">
+                  + Add New Category
+                </option>
               </select>
             </div>
 
             <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-payment-mode">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-payment-mode"
+              >
                 Pay Mode
               </label>
               <select
                 id="add-payment-mode"
                 required
                 value={addForm.paymentModeId}
-                onChange={(e) => setAddForm((f) => ({ ...f, paymentModeId: e.target.value, cardId: "" }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({
+                    ...f,
+                    paymentModeId: e.target.value,
+                    cardId: "",
+                  }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               >
-                <option value="" disabled>Select Pay Mode</option>
+                <option value="" disabled>
+                  Select Pay Mode
+                </option>
                 {availablePaymentModes.map((pm) => (
                   <option key={pm.id} value={pm.id}>
                     {pm.name}
@@ -940,22 +1086,30 @@ export function RecentActivity({
 
           {isCardPayment && (
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="add-card">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="add-card"
+              >
                 Card used
               </label>
               <select
                 id="add-card"
                 required
                 value={addForm.cardId}
-                onChange={(e) => setAddForm((f) => ({ ...f, cardId: e.target.value }))}
+                onChange={(e) =>
+                  setAddForm((f) => ({ ...f, cardId: e.target.value }))
+                }
                 className="w-full rounded-xl border border-app-border bg-gray-50 px-3 py-2 text-sm text-app-text-primary outline-none focus:border-app-primary focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="" disabled>
-                  {availableCards.length > 0 ? "Select card" : "No cards linked to this account"}
+                  {availableCards.length > 0
+                    ? "Select card"
+                    : "No cards linked to this account"}
                 </option>
                 {availableCards.map((card) => (
                   <option key={card.id} value={card.id}>
-                    {card.cardType === "CREDIT_CARD" ? "Credit" : "Debit"} card •••• {card.lastFourDigits}
+                    {card.cardType === "CREDIT_CARD" ? "Credit" : "Debit"} card
+                    •••• {card.lastFourDigits}
                   </option>
                 ))}
               </select>
@@ -970,7 +1124,10 @@ export function RecentActivity({
           {/* Custom Category Name Input */}
           {addForm.categoryId === "custom" && (
             <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-xs font-semibold text-app-text-primary" htmlFor="custom-category">
+              <label
+                className="text-xs font-semibold text-app-text-primary"
+                htmlFor="custom-category"
+              >
                 New Category Name
               </label>
               <input

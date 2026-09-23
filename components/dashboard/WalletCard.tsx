@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAccounts } from "@/api/accounts";
-import { getTransactionSummary } from "@/api/transactions";
-import { getCurrentUser } from "@/api/users";
+import { getAccounts } from "@/lib/api/accounts";
+import { getTransactionSummary } from "@/lib/api/transactions";
+import { getCurrentUser } from "@/lib/api/users";
 
 export type WalletCardProps = {
   balance?: number;
@@ -34,12 +34,16 @@ export function WalletCard({
   });
 
   useEffect(() => {
-    if (balance !== undefined || income !== undefined || expenses !== undefined) return;
+    if (balance !== undefined || income !== undefined || expenses !== undefined)
+      return;
 
     Promise.all([getAccounts(), getTransactionSummary(), getCurrentUser()])
       .then(([accounts, summary, user]) => {
         setWallet({
-          balance: accounts.reduce((sum, account) => sum + (account.amount ?? 0), 0),
+          balance: accounts.reduce(
+            (sum, account) => sum + (account.amount ?? 0),
+            0,
+          ),
           income: summary.income ?? 0,
           expenses: summary.expenses ?? 0,
           accountName: "Available Funds",
@@ -109,7 +113,9 @@ export function WalletCard({
               Total Balance
             </p>
             <div className="mt-1 flex items-baseline gap-1">
-              <span className="text-xl font-bold text-white/80">{currency}</span>
+              <span className="text-xl font-bold text-white/80">
+                {currency}
+              </span>
               <span className="font-mono text-3xl font-extrabold tracking-tight text-white sm:text-[32px]">
                 {formatAmount(wallet.balance)}
               </span>
@@ -117,8 +123,12 @@ export function WalletCard({
           </div>
 
           <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-white/70">
-            <span className="font-mono font-medium tracking-widest">{wallet.userName}</span>
-            <span className="text-[11px] font-semibold text-emerald-300">Live balance</span>
+            <span className="font-mono font-medium tracking-widest">
+              {wallet.userName}
+            </span>
+            <span className="text-[11px] font-semibold text-emerald-300">
+              Live balance
+            </span>
           </div>
         </div>
       </div>
@@ -181,7 +191,10 @@ export function WalletCard({
         <div className="col-span-2 rounded-xl border border-amber-100 bg-amber-50/60 p-3.5 transition hover:bg-amber-50">
           <div className="flex items-center justify-between text-amber-800">
             <span className="text-xs font-semibold">Cash Available</span>
-            <span className="text-xs font-bold">{currency}{formatAmount(wallet.cash)}</span>
+            <span className="text-xs font-bold">
+              {currency}
+              {formatAmount(wallet.cash)}
+            </span>
           </div>
         </div>
       </div>

@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, CalendarDays, Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getTransactions } from "@/api/transactions";
-import type { Transaction } from "@/api/model/Transaction";
+import { getTransactions } from "@/lib/api/transactions";
+import type { Transaction } from "@/lib/api/model/Transaction";
 
 const rupeeFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -28,7 +28,11 @@ export default function TransactionsPage() {
       .then((data) => setTransactions(Array.isArray(data) ? data : []))
       .catch((loadError) => {
         console.error("Failed to load transactions:", loadError);
-        setError(loadError instanceof Error ? loadError.message : "Failed to load transactions.");
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Failed to load transactions.",
+        );
       })
       .finally(() => setLoading(false));
   }, []);
@@ -39,7 +43,11 @@ export default function TransactionsPage() {
 
     if (month) {
       const monthStart = `${month}-01`;
-      const monthEnd = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0)
+      const monthEnd = new Date(
+        Number(month.slice(0, 4)),
+        Number(month.slice(5, 7)),
+        0,
+      )
         .toISOString()
         .slice(0, 10);
       start = monthStart;
@@ -74,10 +82,13 @@ export default function TransactionsPage() {
             <ArrowLeft className="size-3.5" /> Back to analytics
           </button>
           <h1 className="app-title">Transaction History</h1>
-          <p className="app-body mt-2">Review and filter your recent financial activity.</p>
+          <p className="app-body mt-2">
+            Review and filter your recent financial activity.
+          </p>
         </div>
         <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs font-semibold text-app-primary">
-          {filteredTransactions.length} transaction{filteredTransactions.length === 1 ? "" : "s"} shown
+          {filteredTransactions.length} transaction
+          {filteredTransactions.length === 1 ? "" : "s"} shown
         </div>
       </header>
 
@@ -146,43 +157,63 @@ export default function TransactionsPage() {
       <section className="app-card overflow-hidden p-0">
         {loading ? (
           <div className="flex items-center justify-center gap-2 p-12 text-sm text-app-text-muted">
-            <Loader2 className="size-5 animate-spin text-app-primary" /> Loading transactions...
+            <Loader2 className="size-5 animate-spin text-app-primary" /> Loading
+            transactions...
           </div>
         ) : error ? (
           <div className="p-8 text-sm text-red-600">{error}</div>
         ) : filteredTransactions.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center">
             <Search className="size-8 text-app-text-muted" />
-            <p className="mt-3 text-sm font-semibold text-app-text-primary">No transactions found</p>
-            <p className="mt-1 text-xs text-app-text-muted">Try changing or clearing your filters.</p>
+            <p className="mt-3 text-sm font-semibold text-app-text-primary">
+              No transactions found
+            </p>
+            <p className="mt-1 text-xs text-app-text-muted">
+              Try changing or clearing your filters.
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-app-border/70">
             {filteredTransactions.map((transaction) => {
-              const isIncome = transaction.transactionType.toLowerCase() === "income";
+              const isIncome =
+                transaction.transactionType.toLowerCase() === "income";
               return (
-                <article key={transaction.transactionId} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between hover:bg-indigo-50/20">
+                <article
+                  key={transaction.transactionId}
+                  className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between hover:bg-indigo-50/20"
+                >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h2 className="truncate text-sm font-bold text-app-text-primary">
                         {transaction.description || "Transaction"}
                       </h2>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${isIncome ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${isIncome ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}
+                      >
                         {transaction.transactionType}
                       </span>
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-app-text-muted">
-                      <span className="inline-flex items-center gap-1"><CalendarDays className="size-3.5" />{transaction.transactionDate}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <CalendarDays className="size-3.5" />
+                        {transaction.transactionDate}
+                      </span>
                       <span>Category #{transaction.categoryId ?? "N/A"}</span>
                       {transaction.cardLastFourDigits && (
                         <span>
-                          {transaction.cardType === "CREDIT_CARD" ? "Credit" : "Debit"} card •••• {transaction.cardLastFourDigits}
+                          {transaction.cardType === "CREDIT_CARD"
+                            ? "Credit"
+                            : "Debit"}{" "}
+                          card •••• {transaction.cardLastFourDigits}
                         </span>
                       )}
                     </div>
                   </div>
-                  <p className={`shrink-0 text-base font-bold ${isIncome ? "text-emerald-600" : "text-rose-600"}`}>
-                    {isIncome ? "+" : "-"}{rupeeFormatter.format(Math.abs(transaction.amount))}
+                  <p
+                    className={`shrink-0 text-base font-bold ${isIncome ? "text-emerald-600" : "text-rose-600"}`}
+                  >
+                    {isIncome ? "+" : "-"}
+                    {rupeeFormatter.format(Math.abs(transaction.amount))}
                   </p>
                 </article>
               );

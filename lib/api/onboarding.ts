@@ -1,4 +1,4 @@
-import { apiFetch } from "@/api/api-client";
+import { apiFetch } from "@/lib/api/api-client";
 
 export interface BankDto {
   id: string;

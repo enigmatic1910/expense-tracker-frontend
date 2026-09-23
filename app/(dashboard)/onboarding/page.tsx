@@ -25,7 +25,7 @@ import {
   BankDto,
   PaymentModeDto,
   OnboardingRequestDto,
-} from "@/api/onboarding";
+} from "@/lib/api/onboarding";
 
 const languages = [
   { code: "ENGLISH", name: "English", localName: "US / UK", icon: "🇬🇧" },

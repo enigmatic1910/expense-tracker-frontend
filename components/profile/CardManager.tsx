@@ -2,9 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { CreditCard, Loader2, Plus, Trash2 } from "lucide-react";
-import { addCard, deleteCard, getCards, getCardSummaries, type Card, type CardSummary, type CardType } from "@/api/cards";
-import { getAccounts } from "@/api/accounts";
-import type { Account } from "@/api/model/Account";
+import {
+  addCard,
+  deleteCard,
+  getCards,
+  getCardSummaries,
+  type Card,
+  type CardSummary,
+  type CardType,
+} from "@/lib/api/cards";
+import { getAccounts } from "@/lib/api/accounts";
+import type { Account } from "@/lib/api/model/Account";
 
 export function CardManager() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -20,12 +28,22 @@ export function CardManager() {
 
   const loadCards = async () => {
     try {
-      const [cardList, accountList, summaryList] = await Promise.all([getCards(), getAccounts(), getCardSummaries()]);
+      const [cardList, accountList, summaryList] = await Promise.all([
+        getCards(),
+        getAccounts(),
+        getCardSummaries(),
+      ]);
       setCards(cardList);
       setSummaries(summaryList);
-      setAccounts(accountList.filter((account) => account.type?.toUpperCase() !== "CREDIT"));
+      setAccounts(
+        accountList.filter(
+          (account) => account.type?.toUpperCase() !== "CREDIT",
+        ),
+      );
       if (!accountId && accountList.length > 0) {
-        const firstAsset = accountList.find((account) => account.type?.toUpperCase() !== "CREDIT");
+        const firstAsset = accountList.find(
+          (account) => account.type?.toUpperCase() !== "CREDIT",
+        );
         setAccountId(firstAsset?.id ?? "");
       }
     } catch (err) {
@@ -63,7 +81,8 @@ export function CardManager() {
       await addCard({
         cardType: type,
         lastFourDigits: lastFour,
-        ...(type === "DEBIT_CARD" && accountId && { accountId: Number(accountId) }),
+        ...(type === "DEBIT_CARD" &&
+          accountId && { accountId: Number(accountId) }),
         ...(cardLimit !== undefined && { limit: cardLimit }),
       });
       setLastFour("");
@@ -114,8 +133,8 @@ export function CardManager() {
           className="flex items-center justify-between gap-3 rounded-xl border border-app-border p-3 text-xs"
         >
           <span className="font-semibold">
-            {card.cardType === "CREDIT_CARD" ? "Credit card" : "Debit card"} ••••{" "}
-            {card.lastFourDigits}
+            {card.cardType === "CREDIT_CARD" ? "Credit card" : "Debit card"}{" "}
+            •••• {card.lastFourDigits}
           </span>
 
           <div className="flex items-center gap-3">
@@ -124,12 +143,25 @@ export function CardManager() {
             )}
             {card.cardType === "DEBIT_CARD" && (
               <span className="text-app-text-secondary">
-                ₹{Number(summaries.find((item) => item.cardId === card.id)?.spent || 0).toLocaleString("en-IN")} tracked spend
+                ₹
+                {Number(
+                  summaries.find((item) => item.cardId === card.id)?.spent || 0,
+                ).toLocaleString("en-IN")}{" "}
+                tracked spend
               </span>
             )}
             {card.cardType === "CREDIT_CARD" && (
               <span className="text-app-text-secondary">
-                ₹{Math.max(Number(card.limit || 0) - Number(summaries.find((item) => item.cardId === card.id)?.spent || 0), 0).toLocaleString("en-IN")} remaining
+                ₹
+                {Math.max(
+                  Number(card.limit || 0) -
+                    Number(
+                      summaries.find((item) => item.cardId === card.id)
+                        ?.spent || 0,
+                    ),
+                  0,
+                ).toLocaleString("en-IN")}{" "}
+                remaining
               </span>
             )}
             <button
@@ -165,7 +197,9 @@ export function CardManager() {
           maxLength={4}
           placeholder="Last 4 digits"
           value={lastFour}
-          onChange={(event) => setLastFour(event.target.value.replace(/\D/g, ""))}
+          onChange={(event) =>
+            setLastFour(event.target.value.replace(/\D/g, ""))
+          }
         />
         {type === "CREDIT_CARD" && (
           <input
@@ -187,7 +221,8 @@ export function CardManager() {
             <option value="">Link to account</option>
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>
-                {account.bankName || "Account"} {account.lastFourDigits ? `•••• ${account.lastFourDigits}` : ""}
+                {account.bankName || "Account"}{" "}
+                {account.lastFourDigits ? `•••• ${account.lastFourDigits}` : ""}
               </option>
             ))}
           </select>

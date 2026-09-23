@@ -2,8 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Brain, Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
-import { generateInsight, getLatestInsight, type AiInsight } from "@/api/ai";
+import {
+  AlertTriangle,
+  Brain,
+  Lightbulb,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+import {
+  generateInsight,
+  getLatestInsight,
+  type AiInsight,
+} from "@/lib/api/ai";
 import WeeklyGraphTrend from "@/components/dashboard/WeeklyGraphTrend";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import CategorySpend from "@/components/dashboard/CategorySpend";
@@ -20,7 +31,11 @@ export default function AnalyticsPage() {
       .then(setInsight)
       .catch((loadError) => {
         console.error("Failed to load latest insight:", loadError);
-        setError(loadError instanceof Error ? loadError.message : "Failed to load insight.");
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Failed to load insight.",
+        );
       })
       .finally(() => setLoading(false));
   }, []);
@@ -55,9 +70,10 @@ export default function AnalyticsPage() {
             <h1 className="app-title">Analytics Overview</h1>
           </div>
           <p className="app-body mt-2">
-            Explore your spending patterns, recent activity, and category breakdowns in one place.
+            Explore your spending patterns, recent activity, and category
+            breakdowns in one place.
           </p>
-          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
@@ -73,13 +89,18 @@ export default function AnalyticsPage() {
         <div>
           <div className="flex items-center gap-2">
             <Brain className="size-6 text-app-primary" />
-            <h2 className="text-xl font-bold text-app-text-primary">AI Insights</h2>
+            <h2 className="text-xl font-bold text-app-text-primary">
+              AI Insights
+            </h2>
           </div>
           <p className="app-body mt-2">
-            Turn your spending activity into personalized observations and practical next steps.
+            Turn your spending activity into personalized observations and
+            practical next steps.
           </p>
           {generatedDate && (
-            <p className="mt-2 text-xs text-app-text-muted">Generated {generatedDate}</p>
+            <p className="mt-2 text-xs text-app-text-muted">
+              Generated {generatedDate}
+            </p>
           )}
         </div>
         <button
@@ -88,8 +109,16 @@ export default function AnalyticsPage() {
           disabled={generating || loading}
           className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-app-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-app-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {generating ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-          {generating ? "Generating..." : insight ? "Refresh Insight" : "Generate Insight"}
+          {generating ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Sparkles className="size-4" />
+          )}
+          {generating
+            ? "Generating..."
+            : insight
+              ? "Refresh Insight"
+              : "Generate Insight"}
         </button>
       </div>
 
@@ -101,14 +130,17 @@ export default function AnalyticsPage() {
 
       {loading ? (
         <div className="app-card flex items-center justify-center gap-2 p-12 text-sm text-app-text-muted">
-          <Loader2 className="size-5 animate-spin text-app-primary" /> Loading latest insight...
+          <Loader2 className="size-5 animate-spin text-app-primary" /> Loading
+          latest insight...
         </div>
       ) : insight ? (
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="app-card p-6 md:p-8">
             <div className="mb-5 flex items-center gap-2">
               <Lightbulb className="size-5 text-amber-500" />
-              <h2 className="text-lg font-bold text-app-text-primary">Summary</h2>
+              <h2 className="text-lg font-bold text-app-text-primary">
+                Summary
+              </h2>
             </div>
             <p className="text-sm leading-7 text-app-text-secondary">
               {insight.summary || "No summary was returned for this period."}
@@ -154,7 +186,9 @@ export default function AnalyticsPage() {
       ) : (
         <div className="app-card flex flex-col items-center justify-center p-12 text-center">
           <RefreshCw className="size-8 text-app-primary" />
-          <h2 className="mt-4 text-base font-bold text-app-text-primary">No insight yet</h2>
+          <h2 className="mt-4 text-base font-bold text-app-text-primary">
+            No insight yet
+          </h2>
           <p className="mt-1 max-w-md text-sm text-app-text-secondary">
             Generate an insight to analyze your recent financial activity.
           </p>
@@ -184,8 +218,12 @@ function InsightList({
       {items?.length ? (
         <ul className="mt-4 space-y-3">
           {items.map((item, index) => (
-            <li key={`${item}-${index}`} className="text-sm leading-6 text-app-text-secondary">
-              <span className="mr-2 font-bold text-app-primary">•</span>{item}
+            <li
+              key={`${item}-${index}`}
+              className="text-sm leading-6 text-app-text-secondary"
+            >
+              <span className="mr-2 font-bold text-app-primary">•</span>
+              {item}
             </li>
           ))}
         </ul>

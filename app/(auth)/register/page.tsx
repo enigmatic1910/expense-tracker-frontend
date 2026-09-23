@@ -9,7 +9,7 @@ import {
   registerSchema,
 } from "@/validation/auth";
 import { useRouter } from "next/navigation";
-import { registerWithEmailAndPassword } from "@/api/loginWithUserNameAndPassword";
+import { registerWithEmailAndPassword } from "@/lib/api/loginWithUserNameAndPassword";
 import { useAuth } from "@/context/AuthContext";
 export default function RegisterPage() {
   const router = useRouter();

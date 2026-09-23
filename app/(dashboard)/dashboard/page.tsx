@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import WalletCard from "@/components/dashboard/WalletCard";
-import { createAiParsingTask, waitForAiJob } from "@/api/ai";
+import { createAiParsingTask, waitForAiJob } from "@/lib/api/ai";
 
 export default function DashboardPage() {
   const [inputValue, setInputValue] = useState("");
@@ -13,7 +13,8 @@ export default function DashboardPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const rawText = inputValue.trim();
-    if (!rawText || aiStatus === "submitting" || aiStatus === "PROCESSING") return;
+    if (!rawText || aiStatus === "submitting" || aiStatus === "PROCESSING")
+      return;
 
     setAiStatus("submitting");
     setAiError("");
@@ -22,7 +23,9 @@ export default function DashboardPage() {
     try {
       const task = await createAiParsingTask(rawText);
       setAiStatus("PENDING");
-      const result = await waitForAiJob(task.id, (status) => setAiStatus(status.status));
+      const result = await waitForAiJob(task.id, (status) =>
+        setAiStatus(status.status),
+      );
 
       if (result.status === "COMPLETED") {
         setProcessedValue("Transaction parsed and saved successfully.");
@@ -31,7 +34,9 @@ export default function DashboardPage() {
         setAiError("AI could not process this transaction.");
       }
     } catch (error) {
-      setAiError(error instanceof Error ? error.message : "AI processing failed.");
+      setAiError(
+        error instanceof Error ? error.message : "AI processing failed.",
+      );
     } finally {
       setAiStatus("idle");
     }
@@ -51,13 +56,20 @@ export default function DashboardPage() {
               <span className="size-2 animate-pulse rounded-full bg-emerald-300" />
               Your money, made simpler
               <span className="text-indigo-300">•</span>
-              <span>{new Date().toLocaleDateString("en-IN", { weekday: "long", month: "short", day: "numeric" })}</span>
+              <span>
+                {new Date().toLocaleDateString("en-IN", {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
             </div>
             <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Welcome to your financial hub
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-6 text-indigo-100">
-              Track your money effortlessly. Tell your AI assistant what happened and let it organize the rest.
+              Track your money effortlessly. Tell your AI assistant what
+              happened and let it organize the rest.
             </p>
           </div>
 
@@ -89,7 +101,9 @@ export default function DashboardPage() {
 
         {(aiStatus !== "idle" || aiError || processedValue) && (
           <div className="relative mt-4 rounded-xl border border-white/15 bg-black/15 px-3 py-2 text-xs text-indigo-50 backdrop-blur-sm">
-            {aiError || processedValue || `AI status: ${aiStatus.toLowerCase()}`}
+            {aiError ||
+              processedValue ||
+              `AI status: ${aiStatus.toLowerCase()}`}
           </div>
         )}
       </section>

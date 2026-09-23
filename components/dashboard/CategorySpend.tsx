@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { getCategorySpend } from "@/api/transactions";
+import { getCategorySpend } from "@/lib/api/transactions";
 
 export type CategoryExpense = {
   category: string;
@@ -18,7 +18,14 @@ export type CategorySpendProps = {
   className?: string;
 };
 
-const CATEGORY_COLORS = ["#4f46e5", "#06b6d4", "#8b5cf6", "#f59e0b", "#ec4899", "#10b981"];
+const CATEGORY_COLORS = [
+  "#4f46e5",
+  "#06b6d4",
+  "#8b5cf6",
+  "#f59e0b",
+  "#ec4899",
+  "#10b981",
+];
 
 const rupeeFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -91,7 +98,7 @@ export function CategorySpend({
   const totalSpent = chartData.reduce((acc, curr) => acc + curr.amount, 0);
   const topCategory = chartData.reduce(
     (max, curr) => (curr.amount > max.amount ? curr : max),
-    chartData[0] || { category: "N/A", amount: 0, color: "#4f46e5" }
+    chartData[0] || { category: "N/A", amount: 0, color: "#4f46e5" },
   );
   const budgetUsagePercent =
     budgetLimit > 0
@@ -159,7 +166,10 @@ export function CategorySpend({
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full text-xs">
             {chartData.slice(0, 4).map((item) => (
-              <div key={item.category} className="flex items-center gap-1.5 min-w-0">
+              <div
+                key={item.category}
+                className="flex items-center gap-1.5 min-w-0"
+              >
                 <span
                   className="size-2 shrink-0 rounded-full"
                   style={{ backgroundColor: item.color }}
@@ -213,8 +223,6 @@ export function CategorySpend({
           })}
         </div>
       </div>
-
-      
     </div>
   );
 }

@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getSpendingTrend } from "@/api/transactions";
+import { getSpendingTrend } from "@/lib/api/transactions";
 
 export type DailySpending = {
   day: string;
@@ -50,14 +50,18 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
     return (
       <div className="rounded-xl border border-app-border bg-white/95 p-3 shadow-lg backdrop-blur-sm">
-        <p className="text-xs font-semibold text-app-text-secondary">{fullDate}</p>
+        <p className="text-xs font-semibold text-app-text-secondary">
+          {fullDate}
+        </p>
         <div className="mt-1 flex items-baseline gap-1">
           <span className="text-xs font-semibold text-app-primary">₹</span>
           <span className="text-base font-extrabold text-app-text-primary">
             {rupeeFormatter.format(item.value ?? 0)}
           </span>
         </div>
-        <p className="mt-0.5 text-[11px] font-medium text-app-text-muted">Daily Expenditure</p>
+        <p className="mt-0.5 text-[11px] font-medium text-app-text-muted">
+          Daily Expenditure
+        </p>
       </div>
     );
   }
@@ -97,7 +101,7 @@ export function WeeklyGraphTrend({
   const dailyAverage = chartData.length > 0 ? totalSpent / chartData.length : 0;
   const peakDay = chartData.reduce(
     (max, curr) => (curr.spent > max.spent ? curr : max),
-    chartData[0] || { day: "N/A", spent: 0 }
+    chartData[0] || { day: "N/A", spent: 0 },
   );
 
   return (
@@ -116,7 +120,9 @@ export function WeeklyGraphTrend({
               </span>
             </div>
             {description && (
-              <p className="app-body mt-0.5 text-xs text-app-text-secondary">{description}</p>
+              <p className="app-body mt-0.5 text-xs text-app-text-secondary">
+                {description}
+              </p>
             )}
           </div>
 
@@ -167,7 +173,13 @@ export function WeeklyGraphTrend({
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
-                  <linearGradient id="spendingIndigoGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="spendingIndigoGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.28} />
                     <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.0} />
                   </linearGradient>

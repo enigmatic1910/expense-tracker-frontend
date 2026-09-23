@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { refreshAccessToken } from "@/api/api-client";
+import { refreshAccessToken } from "@/lib/api/api-client";
 
 interface AuthContextType {
   accessToken: string;
@@ -52,7 +52,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     let expirationTime: number;
     try {
       const payload = JSON.parse(
-        window.atob(accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+        window.atob(
+          accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"),
+        ),
       ) as { exp?: number };
       expirationTime = (payload.exp ?? 0) * 1000;
     } catch {

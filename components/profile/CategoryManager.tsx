@@ -7,7 +7,7 @@ import {
   addCategory as createCategory,
   getCategories,
   type Category,
-} from "@/api/categories";
+} from "@/lib/api/categories";
 
 export const CategoryManager = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,7 +43,11 @@ export const CategoryManager = () => {
     const trimmed = newCat.trim();
     if (!trimmed) return;
 
-    if (categories.some((category) => category.name.toLowerCase() === trimmed.toLowerCase())) {
+    if (
+      categories.some(
+        (category) => category.name.toLowerCase() === trimmed.toLowerCase(),
+      )
+    ) {
       setError("This category already exists.");
       return;
     }
@@ -57,7 +61,11 @@ export const CategoryManager = () => {
       setIsAdding(false);
     } catch (saveError) {
       console.error("Failed to add category:", saveError);
-      setError(saveError instanceof Error ? saveError.message : "Failed to add category.");
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to add category.",
+      );
     } finally {
       setSaving(false);
     }
@@ -94,15 +102,19 @@ export const CategoryManager = () => {
         {loading ? (
           <Loader2 className="size-4 animate-spin text-app-primary" />
         ) : categories.length === 0 ? (
-          <span className="text-xs text-app-text-muted">No categories found.</span>
-        ) : categories.map((category) => (
-          <div
-            key={category.id}
-            className="group flex items-center gap-2 rounded-xl border border-app-border bg-gray-50/70 px-3 py-1.5 text-xs font-medium text-app-text-primary transition-all hover:border-indigo-200 hover:bg-indigo-50/40"
-          >
-            <span>{category.name}</span>
-          </div>
-        ))}
+          <span className="text-xs text-app-text-muted">
+            No categories found.
+          </span>
+        ) : (
+          categories.map((category) => (
+            <div
+              key={category.id}
+              className="group flex items-center gap-2 rounded-xl border border-app-border bg-gray-50/70 px-3 py-1.5 text-xs font-medium text-app-text-primary transition-all hover:border-indigo-200 hover:bg-indigo-50/40"
+            >
+              <span>{category.name}</span>
+            </div>
+          ))
+        )}
 
         {isAdding && (
           <div className="flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-200">

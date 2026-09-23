@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { loginInput, loginOutput, loginSchema } from "@/validation/auth";
 import AuthFormContainer from "@/components/auth/AuthFormContainer";
-import { loginWithUserNameAndPassword } from "@/api/loginWithUserNameAndPassword";
+import { loginWithUserNameAndPassword } from "@/lib/api/loginWithUserNameAndPassword";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function LoginPage() {
