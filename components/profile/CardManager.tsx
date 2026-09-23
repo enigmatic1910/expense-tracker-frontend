@@ -11,14 +11,10 @@ import {
   type CardSummary,
   type CardType,
 } from "@/lib/api/cards";
-import { getAccounts } from "@/lib/api/accounts";
-import type { Account } from "@/lib/api/model/Account";
 
 export function CardManager() {
   const [cards, setCards] = useState<Card[]>([]);
   const [summaries, setSummaries] = useState<CardSummary[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [accountId, setAccountId] = useState("");
   const [type, setType] = useState<CardType>("CREDIT_CARD");
   const [lastFour, setLastFour] = useState("");
   const [limit, setLimit] = useState("");
@@ -28,24 +24,12 @@ export function CardManager() {
 
   const loadCards = async () => {
     try {
-      const [cardList, accountList, summaryList] = await Promise.all([
+      const [cardList, summaryList] = await Promise.all([
         getCards(),
-        getAccounts(),
         getCardSummaries(),
       ]);
       setCards(cardList);
       setSummaries(summaryList);
-      setAccounts(
-        accountList.filter(
-          (account) => account.type?.toUpperCase() !== "CREDIT",
-        ),
-      );
-      if (!accountId && accountList.length > 0) {
-        const firstAsset = accountList.find(
-          (account) => account.type?.toUpperCase() !== "CREDIT",
-        );
-        setAccountId(firstAsset?.id ?? "");
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load cards.");
     }
@@ -58,11 +42,6 @@ export function CardManager() {
   const handleAdd = async () => {
     if (!/^\d{4}$/.test(lastFour)) {
       setError("Enter exactly 4 digits.");
-      return;
-    }
-
-    if (type === "DEBIT_CARD" && !accountId) {
-      setError("Select the account linked to this debit card.");
       return;
     }
 
@@ -81,8 +60,6 @@ export function CardManager() {
       await addCard({
         cardType: type,
         lastFourDigits: lastFour,
-        ...(type === "DEBIT_CARD" &&
-          accountId && { accountId: Number(accountId) }),
         ...(cardLimit !== undefined && { limit: cardLimit }),
       });
       setLastFour("");
@@ -210,22 +187,6 @@ export function CardManager() {
             value={limit}
             onChange={(event) => setLimit(event.target.value)}
           />
-        )}
-        {type === "DEBIT_CARD" && (
-          <select
-            className="app-input"
-            value={accountId}
-            onChange={(event) => setAccountId(event.target.value)}
-            required
-          >
-            <option value="">Link to account</option>
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.bankName || "Account"}{" "}
-                {account.lastFourDigits ? `•••• ${account.lastFourDigits}` : ""}
-              </option>
-            ))}
-          </select>
         )}
       </div>
 
